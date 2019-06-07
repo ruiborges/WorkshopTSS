@@ -13,68 +13,81 @@
 <body>
   <div class="container-fluid mt-3">
     <div class="row">
-      <div class="col-4 mb-3">
+      <div class="col-12 col-lg-4 mb-3">
         <div class="card">
-          <div class="card-body">
-            <p>Credentials: admin:admin</p>
-            <p></p>
-            <form>
+          <div class="card-body" id="loginFormCard">
+            <p class="mb-3">Credentials: admin:admin</p>
+            <small id="formFeedback" class="form-text text-danger"></small>
+            <form id="loginForm">
               <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                <input type="email" class="form-control" id="emailTxt" aria-describedby="emailHelp"
                   placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                  else.</small>
               </div>
               <div class="form-group">
                 <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                <input type="password" class="form-control" id="passwordTxt" placeholder="Password">
               </div>
               <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                <input type="checkbox" class="form-check-input" id="tosCheck">
+                <label class="form-check-label" for="tosCheck">Agree with the TOS?</label>
               </div>
               <button type="submit" class="btn btn-primary">Login</button>
             </form>
           </div>
         </div>
       </div>
-      <div class="col-4 mb-3">
+
+      <div class="col-12 col-lg-4 mb-3">
         <div class="card">
           <div class="card-body">
-            <form>
+            <form id="alertForm">
               <div class="form-group">
                 <label for="exampleInputEmail1">Alert Text</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Just enter some text...">
+                <input type="text" class="form-control" id="alertTxt" placeholder="Just enter some text...">
               </div>
               <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="checkbox1">
-                <label class="form-check-label" for="exampleCheck1">Hello guys, I'm a checkbox!</label>
+                <input type="checkbox" class="form-check-input" id="checkBox2">
+                <label class="form-check-label" for="exampleCheck1" id="checkLabel">Hello guys, I'm a checkbox!</label>
               </div>
               <button type="submit" class="btn btn-primary">Hit Me</button>
             </form>
           </div>
         </div>
       </div>
-      <div class="col-4 mb-3">
+
+      <div class="col-12 col-lg-4 mb-3">
         <div class="card">
           <div class="card-body">
+            <button type="submit" class="btn btn-outline-secondary mb-4" id="fetchUsersBtn">Get Users</button>
             <div class="form-group">
               <label for="exampleFormControlSelect1">Example select</label>
-              <select class="form-control" id="exampleFormControlSelect1">
-                <option>User 1</option>
-                <option>User 2</option>
-                <option>User 3</option>
-                <option>User 4</option>
-                <option>User 5</option>
+              <select class="form-control" id="usersSelect" readonly>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary">Select User</button>
+
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+    style="position: absolute;bottom: 0px;right: 10px;width:20vw;">
+    <div class="toast-header">
+      <img src="http://via.placeholder.com/34" class="rounded mr-2" alt="...">
+      <strong class="mr-auto">Fetched Users</strong>
+      <small class="text-muted">Just Now</small>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      Hi friend!
+    </div>
+  </div>
+
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
@@ -84,6 +97,72 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
+
+  <script>
+    $(document).ready(function () {
+      $("#formFeedback").text("");
+      $("#loginForm").submit(function (e) {
+        e.preventDefault(e);
+        form1Validate(e);
+      });
+
+      $("#alertForm").submit(function (e) {
+        e.preventDefault(e);
+        form2Validate(e);
+      });
+
+      $("#fetchUsersBtn").click(function (e) {
+        form3Handle(e);
+      });
+    });
+
+    function form1Validate(e) {
+      $("#formFeedback").text("");
+      console.log($("#emailTxt").val());
+      if ($("#emailTxt").val() === "") {
+        $("#formFeedback").text("Please enter email");
+      }
+      else if ($("#passwordTxt").val() === "") {
+        $("#formFeedback").text("Please enter password");
+      } else if (!$("#tosCheck").is(":checked")) {
+        $("#formFeedback").text("Accept the TOS!");
+      } else {
+        $("#emailTxt").val("");
+        $("#passwordTxt").val("");
+        $("#tosCheck").attr("checked", "false");
+        if ($("#emailTxt").val() === "admin" && $("#passwordTxt").val() === "admin") {
+          $("#formFeedback").removeClass("text-danger");
+          $("#formFeedback").addClass("text-success");
+          $("#formFeedback").text("Correct Login")
+        } else {
+          $("#formFeedback").text("Wrong Login")
+        }
+      }
+    }
+
+    function form2Validate(e) {
+      if ($("#alertTxt").val()) {
+        alert($("#alertTxt").val());
+      }
+
+      if (!$("#checkBox2").is(":checked")) {
+        $("#checkLabel").addClass("text-danger");
+      }
+    }
+
+    function form3Handle(e) {
+      setTimeout(() => {
+        $("#usersSelect").removeAttr("readonly")
+        $('.toast').toast({ 'delay': 50000 });
+        $('.toast').toast('show');
+        ["User 1", "User 2", " User 3", "User 4"].forEach(element => {
+          $("#usersSelect").append($("<option></option>")
+            .attr("value", element)
+            .text(element));
+        });
+      }, 1000);
+    }
+  </script>
 </body>
 
 </html>
